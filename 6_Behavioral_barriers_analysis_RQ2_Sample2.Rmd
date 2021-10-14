@@ -1,0 +1,201 @@
+---
+title: "Do you have your smartphone with you? Behavioral barriers for measuring everyday activities with smartphone sensors"
+author: "Florian Keusch, Alexander Wenz, & Frederick G. Conrad"
+date: 
+output:
+  html_document:
+    number_sections: false
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+<style type="text/css">
+h1.title {
+  font-size: 28px;
+}
+h1 { /* Header 1 */
+  font-size: 24px;
+}
+h2 { /* Header 2 */
+  font-size: 20px;
+}
+h3 { /* Header 3 */
+  font-size: 16px;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message=FALSE, warning=FALSE}
+## set working directory
+setwd("C:/Users/Alexander/Documents/1 Research/3 Published/19 Behavioral barriers/Data/v2")
+
+## load packages
+library(readr)
+library(dplyr)
+library(qwraps2)
+library(margins)
+library(knitr)
+library(kableExtra)
+library(DescTools)
+library(stargazer)
+library(broom)
+library(MASS)
+
+## import data
+load("Behavioral barriers_Sample2.RData")
+```
+
+# Table A7. Logistic regression models of smartphone usage behaviors on sociodemographic and smartphone-related characteristics Sample 2.
+## Smartphone shared with another person
+```{r}
+order <- c("genderFemale", "agegroup125-30", "agegroup131-40", "agegroup141-50", "agegroup151-60", "agegroup161+", "eduHigh school degree", "eduCollege degree", "osAndroid", "osOther OS", "frequseEvery day", "frequseSeveral times a day", "skillsIntermediate", "skillsAdvanced", "phonedependentYes")
+
+data$sharing <- ifelse(data$sharing=="Smartphone shared with another person", 1,
+                       ifelse(data$sharing=="Not shared with another person", 0, NA))
+sharing <- glm(sharing~gender+agegroup1+edu+os+frequse+skills+phonedependent, data, family="binomial")
+
+sharing_outsave <- summary(margins(sharing)) %>%
+  mutate(sample=2,
+         dependent=1,
+         independent=factor) %>%
+  dplyr::select(sample, dependent, independent, AME, lower, upper) %>%
+  slice(match(order, independent))
+
+sharing_outprint <- summary(margins(sharing)) %>%
+  dplyr::select(factor, AME, SE, p) %>%
+  slice(match(order, factor))
+
+kable(sharing_outprint, digits=3) %>%
+  kable_styling()
+
+nobs(sharing)
+round(PseudoR2(sharing, which="Nagelkerke"), digits=3)
+```
+
+## Smartphone not always on
+```{r}
+data$turnedoff <- ifelse(data$turnedoff=="Smartphone not always on", 1,
+                       ifelse(data$turnedoff=="Always on", 0, NA))
+turnedoff <- glm(turnedoff~gender+agegroup1+edu+os+frequse+skills+phonedependent, data, family="binomial")
+
+turnedoff_outsave <- summary(margins(turnedoff)) %>%
+  mutate(sample=2,
+         dependent=2,
+         independent=factor) %>%
+  dplyr::select(sample, dependent, independent, AME, lower, upper) %>%
+  slice(match(order, independent))
+
+turnedoff_outprint <- summary(margins(turnedoff)) %>%
+  dplyr::select(factor, AME, SE, p) %>%
+  slice(match(order, factor))
+
+kable(turnedoff_outprint, digits=3) %>%
+  kable_styling()
+
+nobs(turnedoff)
+round(PseudoR2(turnedoff, which="Nagelkerke"), digits=3)
+```
+
+## Smartphone left at home
+```{r}
+data$outhomeuse <- ifelse(data$outhomeuse=="Smartphone left at home", 1,
+                       ifelse(data$outhomeuse=="Not left at home", 0, NA))
+outhomeuse <- glm(outhomeuse~gender+agegroup1+edu+os+frequse+skills+phonedependent, data, family="binomial")
+
+outhomeuse_outsave <- summary(margins(outhomeuse)) %>%
+  mutate(sample=2,
+         dependent=3,
+         independent=factor) %>%
+  dplyr::select(sample, dependent, independent, AME, lower, upper) %>%
+  slice(match(order, independent))
+
+outhomeuse_outprint <- summary(margins(outhomeuse)) %>%
+  dplyr::select(factor, AME, SE, p) %>%
+  slice(match(order, factor))
+
+kable(outhomeuse_outprint, digits=3) %>%
+  kable_styling()
+
+nobs(outhomeuse)
+round(PseudoR2(outhomeuse, which="Nagelkerke"), digits=3)
+```
+
+## Smartphone carried in purse/backpack/bag
+```{r}
+data$outhomelocation <- ifelse(data$outhomelocation=="In purse/backpack/bag", 1,
+                       ifelse(data$outhomelocation=="Close to body", 0, NA))
+outhomelocation <- glm(outhomelocation~gender+agegroup1+edu+os+frequse+skills+phonedependent, data, family="binomial")
+
+outhomelocation_outsave <- summary(margins(outhomelocation)) %>%
+  mutate(sample=2,
+         dependent=4,
+         independent=factor) %>%
+  dplyr::select(sample, dependent, independent, AME, lower, upper) %>%
+  slice(match(order, independent))
+
+outhomelocation_outprint <- summary(margins(outhomelocation)) %>%
+  dplyr::select(factor, AME, SE, p) %>%
+  slice(match(order, factor))
+
+kable(outhomelocation_outprint, digits=3) %>%
+  kable_styling()
+
+nobs(outhomelocation)
+round(PseudoR2(outhomelocation, which="Nagelkerke"), digits=3)
+```
+
+## Smartphone left stationary when at home
+```{r}
+data$athomelocation <- ifelse(data$athomelocation=="Smartphone left stationary when at home", 1,
+                       ifelse(data$athomelocation=="Not left stationary when at home", 0, NA))
+athomelocation <- glm(athomelocation~gender+agegroup1+edu+os+frequse+skills+phonedependent, data, family="binomial")
+
+athomelocation_outsave <- summary(margins(athomelocation)) %>%
+  mutate(sample=2,
+         dependent=5,
+         independent=factor) %>%
+  dplyr::select(sample, dependent, independent, AME, lower, upper) %>%
+  slice(match(order, independent))
+
+athomelocation_outprint <- summary(margins(athomelocation)) %>%
+  dplyr::select(factor, AME, SE, p) %>%
+  slice(match(order, factor))
+
+kable(athomelocation_outprint, digits=3) %>%
+  kable_styling()
+
+nobs(athomelocation)
+round(PseudoR2(athomelocation, which="Nagelkerke"), digits=3)
+```
+
+## Smartphone turned off or in other room at night
+```{r}
+data$nightstatusandlocation <- ifelse(data$nightstatusandlocation=="Smartphone turned off or in other room at night", 1,
+                       ifelse(data$nightstatusandlocation=="Turned on and in same room at night", 0, NA))
+nightstatusandlocation <- glm(nightstatusandlocation~gender+agegroup1+edu+os+frequse+skills+phonedependent, data, family="binomial")
+
+nightstatusandlocation_outsave <- summary(margins(nightstatusandlocation)) %>%
+  mutate(sample=2,
+         dependent=6,
+         independent=factor) %>%
+  dplyr::select(sample, dependent, independent, AME, lower, upper) %>%
+  slice(match(order, independent))
+
+nightstatusandlocation_outprint <- summary(margins(nightstatusandlocation)) %>%
+  dplyr::select(factor, AME, SE, p) %>%
+  slice(match(order, factor))
+
+kable(nightstatusandlocation_outprint, digits=3) %>%
+  kable_styling()
+
+nobs(nightstatusandlocation)
+round(PseudoR2(nightstatusandlocation, which="Nagelkerke"), digits=3)
+
+## save regression output in csv file
+output_barriers <- bind_rows(sharing_outsave, turnedoff_outsave, outhomeuse_outsave, outhomelocation_outsave, athomelocation_outsave, nightstatusandlocation_outsave)
+write_csv(output_barriers, "output_barriers_sample2.csv")
+```

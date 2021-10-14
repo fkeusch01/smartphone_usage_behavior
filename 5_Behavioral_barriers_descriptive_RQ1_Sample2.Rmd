@@ -1,0 +1,103 @@
+---
+title: "Do you have your smartphone with you? Behavioral barriers for measuring everyday activities with smartphone sensors"
+author: "Florian Keusch, Alexander Wenz, & Frederick G. Conrad"
+date: 
+output:
+  html_document:
+    number_sections: false
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+<style type="text/css">
+h1.title {
+  font-size: 28px;
+}
+h1 { /* Header 1 */
+  font-size: 24px;
+}
+h2 { /* Header 2 */
+  font-size: 20px;
+}
+h3 { /* Header 3 */
+  font-size: 16px;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message=FALSE, warning=FALSE}
+## set working directory
+setwd("C:/Users/Alexander/Documents/1 Research/3 Published/19 Behavioral barriers/Data/v2")
+
+## load packages
+library(readr)
+library(dplyr)
+library(qwraps2)
+library(margins)
+library(knitr)
+library(kableExtra)
+library(DescTools)
+library(stargazer)
+library(broom)
+library(MASS)
+
+## import data
+load("Behavioral barriers_Sample2.RData")
+```
+
+# Table 2. Descriptive statistics.
+```{r, results='asis'}
+options(qwraps2_markup = "markdown")
+sample_2 <- data %>%
+  dplyr::select(gender, agegroup1, edu, os, frequse, skills, phonedependent)
+summary <- sample_2 %>%
+  qsummary(.,n_perc_args = list(digits = 1, show_symbol = TRUE)) 
+summary_table(sample_2, summary)
+```
+
+# Table 3. Prevalence of behavioral barriers to measuring mobility, physical activity, and sleep using smartphone sensors.
+```{r, results='asis'}
+options(qwraps2_markup = "markdown")
+sample_2 <- data %>%
+  dplyr::select(sharing, turnedoff, outhomeuse, outhomelocation, athomelocation, nightstatusandlocation)
+summary <- sample_2 %>%
+  qsummary(.,n_perc_args = list(digits = 1, show_symbol = TRUE)) 
+summary_table(sample_2, summary)
+```
+
+# Table A3. Descriptive statistics of measures before recoding.
+```{r, results='asis'}
+options(qwraps2_markup = "markdown")
+sample_2 <- data %>%
+  dplyr::select(frequse1, skills1, hasdesktop, hastablet, outhomeuse1, outhomelocation1, nightstatus1, nightlocation1, athomelocation1)
+summary <- sample_2 %>%
+  qsummary(.,n_perc_args = list(digits = 1, show_symbol = TRUE)) 
+summary_table(sample_2, summary)
+```
+
+```{r}
+summary(data$hrsturnedon)
+sd(data$hrsturnedon, na.rm=TRUE)
+```
+
+# Table A4. Coding rules for implausible responses to questions about sleep duration.
+```{r, results='asis'}
+sleepcoding <- data.frame("N Weekday"=c(table(data$flag1)[[2]], table(data$flag2)[[2]], table(data$flag3)[[2]], table(data$flag4)[[2]]),
+                          "N Weekend"=c(table(data$flag10)[[2]], table(data$flag20)[[2]], table(data$flag30)[[2]], table(data$flag40)[[2]]))
+
+kable(sleepcoding)
+```
+
+# Table A5. Descriptive statistics of everyday activities Sample 2.
+```{r, results='asis'}
+options(qwraps2_markup = "markdown")
+sample_2 <- data %>%
+  dplyr::select(kmtravelwd_adj1, kmtravelwdlog, kmtravelwe_adj1, kmtravelwelog, vpa, vpa1, vpaordinal, mpa, mpa1, mpaordinal, hrssitwd_adj1, hrssitwe_adj1, sleephrswd_adj1, sleephrswe_adj1)
+summary <- sample_2 %>%
+  qsummary(.,n_perc_args = list(digits = 1, show_symbol = TRUE)) 
+summary_table(sample_2, summary)
+```

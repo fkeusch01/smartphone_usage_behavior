@@ -1,0 +1,349 @@
+---
+title: "Do you have your smartphone with you? Behavioral barriers for measuring everyday activities with smartphone sensors"
+author: "Florian Keusch, Alexander Wenz, & Frederick G. Conrad"
+date: 
+output:
+  html_document:
+    number_sections: false
+    toc: true
+    toc_float: true
+    toc_depth: 3
+---
+
+<style type="text/css">
+h1.title {
+  font-size: 28px;
+}
+h1 { /* Header 1 */
+  font-size: 24px;
+}
+h2 { /* Header 2 */
+  font-size: 20px;
+}
+h3 { /* Header 3 */
+  font-size: 16px;
+}
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message=FALSE, warning=FALSE}
+## set working directory
+setwd("C:/Users/Alexander/Documents/1 Research/3 Published/19 Behavioral barriers/Data/v2")
+
+## load packages
+library(readr)
+library(dplyr)
+library(qwraps2)
+library(margins)
+library(knitr)
+library(kableExtra)
+library(DescTools)
+library(stargazer)
+library(broom)
+library(MASS)
+
+## import data
+load("Behavioral barriers_Sample2.RData")
+```
+
+# Table A8. OLS regression models of travel distance on smartphone usage behaviors and sociodemographic and smartphone-related characteristics Sample 2.
+```{r, results='asis'}
+data <- data %>%
+  mutate(turnedoff=relevel(turnedoff, ref="Always on"),
+         outhomeuse=relevel(outhomeuse, ref="Not left at home"),
+         sharing=relevel(sharing, ref="Not shared with another person"))
+
+wdmobility <- lm(kmtravelwd_adj1~turnedoff+outhomeuse+sharing, data)
+wdmobilityc <- lm(kmtravelwd_adj1~turnedoff+outhomeuse+sharing+gender+agegroup1+edu+os+frequse+skills+phonedependent, data)
+wemobility <- lm(kmtravelwe_adj1~turnedoff+outhomeuse+sharing, data)
+wemobilityc <- lm(kmtravelwe_adj1~turnedoff+outhomeuse+sharing+gender+agegroup1+edu+os+frequse+skills+phonedependent, data)
+
+wdmobility_outsave <- tidy(wdmobility, conf.int=TRUE, conf.level=0.95) %>%
+  mutate(sample=2,
+         model=1,
+         dependent=1,
+         independent=term,
+         lower=conf.low,
+         upper=conf.high) %>%
+  dplyr::select(sample, model, dependent, independent, estimate, lower, upper)
+
+wdmobilityc_outsave <- tidy(wdmobilityc, conf.int=TRUE, conf.level=0.95) %>%
+  mutate(sample=2,
+         model=2,
+         dependent=1,
+         independent=term,
+         lower=conf.low,
+         upper=conf.high) %>%
+  dplyr::select(sample, model, dependent, independent, estimate, lower, upper) %>%
+  filter(independent=="(Intercept)"|independent=="turnedoffSmartphone not always on"|independent=="outhomeuseSmartphone left at home" |independent=="sharingSmartphone shared with another person")
+
+wemobility_outsave <- tidy(wemobility, conf.int=TRUE, conf.level=0.95) %>%
+  mutate(sample=2,
+         model=1,
+         dependent=2,
+         independent=term,
+         lower=conf.low,
+         upper=conf.high) %>%
+  dplyr::select(sample, model, dependent, independent, estimate, lower, upper)
+
+wemobilityc_outsave <- tidy(wemobilityc, conf.int=TRUE, conf.level=0.95) %>%
+  mutate(sample=2,
+         model=2,
+         dependent=2,
+         independent=term,
+         lower=conf.low,
+         upper=conf.high) %>%
+  dplyr::select(sample, model, dependent, independent, estimate, lower, upper) %>%
+  filter(independent=="(Intercept)"|independent=="turnedoffSmartphone not always on"|independent=="outhomeuseSmartphone left at home"|independent=="sharingSmartphone shared with another person")
+
+wdmobilitylog <- lm(kmtravelwdlog~turnedoff+outhomeuse+sharing, data)
+wdmobilitylogc <- lm(kmtravelwdlog~turnedoff+outhomeuse+sharing+gender+agegroup1+edu+os+frequse+skills+phonedependent, data)
+wemobilitylog <- lm(kmtravelwelog~turnedoff+outhomeuse+sharing, data)
+wemobilitylogc <- lm(kmtravelwelog~turnedoff+outhomeuse+sharing+gender+agegroup1+edu+os+frequse+skills+phonedependent, data)
+
+wdmobilitylog_outsave <- tidy(wdmobilitylog, conf.int=TRUE, conf.level=0.95) %>%
+  mutate(sample=2,
+         model=1,
+         dependent=1,
+         independent=term,
+         lower=conf.low,
+         upper=conf.high) %>%
+  dplyr::select(sample, model, dependent, independent, estimate, lower, upper)
+
+wdmobilitylogc_outsave <- tidy(wdmobilitylogc, conf.int=TRUE, conf.level=0.95) %>%
+  mutate(sample=2,
+         model=2,
+         dependent=1,
+         independent=term,
+         lower=conf.low,
+         upper=conf.high) %>%
+  dplyr::select(sample, model, dependent, independent, estimate, lower, upper) %>%
+  filter(independent=="(Intercept)"|independent=="turnedoffSmartphone not always on"|independent=="outhomeuseSmartphone left at home"|independent=="sharingSmartphone shared with another person")
+
+wemobilitylog_outsave <- tidy(wemobilitylog, conf.int=TRUE, conf.level=0.95) %>%
+  mutate(sample=2,
+         model=1,
+         dependent=2,
+         independent=term,
+         lower=conf.low,
+         upper=conf.high) %>%
+  dplyr::select(sample, model, dependent, independent, estimate, lower, upper)
+
+wemobilitylogc_outsave <- tidy(wemobilitylogc, conf.int=TRUE, conf.level=0.95) %>%
+  mutate(sample=2,
+         model=2,
+         dependent=2,
+         independent=term,
+         lower=conf.low,
+         upper=conf.high) %>%
+  dplyr::select(sample, model, dependent, independent, estimate, lower, upper) %>%
+  filter(independent=="(Intercept)"|independent=="turnedoffSmartphone not always on"|independent=="outhomeuseSmartphone left at home"|independent=="sharingSmartphone shared with another person")
+
+stargazer(wdmobility, wdmobilityc, wdmobilitylog, wdmobilitylogc, wemobility, wemobilityc, wemobilitylog, wemobilitylogc, header=FALSE, align=TRUE, type='html', intercept.bottom = FALSE, digits=2, star.cutoffs = c(0.05, 0.01, 0.001), omit.stat=c("ser", "f"), dep.var.caption  = "Travel distance(km)", dep.var.labels   = c("Weekday", "Weekday(log)", "Weekend", "Weekend(log)"), model.names=TRUE, order=c("Constant", "sharing", "turnedoff", "outhomeuse", "gender", "agegroup1", "edu", "os", "frequse", "skills", "phonedependent"))
+```
+
+# Table A9. Logistic regression models of physical activity on smartphone usage behaviors and sociodemographic and smartphone-related characteristics Sample 2.
+## Vigorous physical activity: Ordinal response
+```{r}
+data <- data %>%
+  mutate(outhomelocation=relevel(outhomelocation, ref="Close to body"),
+         athomelocation=relevel(athomelocation, ref="Not left stationary when at home"))
+
+order_pa <- c("sharingSmartphone shared with another person", "turnedoffSmartphone not always on", "outhomeuseSmartphone left at home", "outhomelocationIn purse/backpack/bag", "athomelocationSmartphone left stationary when at home")
+order_pac <- c("sharingSmartphone shared with another person", "turnedoffSmartphone not always on", "outhomeuseSmartphone left at home", "outhomelocationIn purse/backpack/bag", "athomelocationSmartphone left stationary when at home", "genderFemale", "agegroup125-30", "agegroup131-40", "agegroup141-50", "agegroup151-60", "agegroup161+", "eduHigh school degree", "eduCollege degree", "osAndroid", "osOther OS", "frequseEvery day", "frequseSeveral times a day", "skillsIntermediate", "skillsAdvanced", "phonedependentYes")
+
+vpaordinal <- polr(vpaordinal~turnedoff+outhomeuse+outhomelocation+athomelocation+sharing, data, Hess=TRUE)
+vpacordinal <- polr(vpaordinal~turnedoff+outhomeuse+outhomelocation+athomelocation+sharing+gender+agegroup1+edu+os+frequse+skills+phonedependent, data, Hess=TRUE)
+
+vpaordinal_outsave <- summary(margins(vpaordinal)) %>%
+  mutate(sample=2,
+         model=1,
+         dependent=3,
+         independent=factor,
+         estimate=AME) %>%
+  dplyr::select(sample, model, dependent, independent, estimate, lower, upper)
+
+vpacordinal_outsave <- summary(margins(vpacordinal)) %>%
+  mutate(sample=2,
+         model=2,
+         dependent=3,
+         independent=factor,
+         estimate=AME) %>%
+  dplyr::select(sample, model, dependent, independent, estimate, lower, upper) %>%
+  filter(independent=="turnedoffSmartphone not always on"|independent=="outhomeuseSmartphone left at home"|independent=="outhomelocationIn purse/backpack/bag"|independent=="athomelocationSmartphone left stationary when at home"|independent=="sharingSmartphone shared with another person")
+
+vpaordinal_outprint <- summary(margins(vpaordinal)) %>%
+  dplyr::select(factor, AME, SE, p) %>%
+  slice(match(order_pa, factor))
+
+vpacordinal_outprint <- summary(margins(vpacordinal)) %>%
+  dplyr::select(factor, AME, SE, p) %>%
+  slice(match(order_pac, factor))
+
+kable(vpaordinal_outprint, digits=3) %>%
+  kable_styling()
+
+nobs(vpaordinal)
+round(PseudoR2(vpaordinal, which="Nagelkerke"), digits=3)
+
+kable(vpacordinal_outprint, digits=3) %>%
+  kable_styling()
+
+nobs(vpacordinal)
+round(PseudoR2(vpacordinal, which="Nagelkerke"), digits=3)
+```
+
+## Moderate physical activity: Ordinal response
+```{r}
+mpaordinal <- polr(mpaordinal~turnedoff+outhomeuse+outhomelocation+athomelocation+sharing, data, Hess=TRUE)
+mpacordinal <- polr(mpaordinal~turnedoff+outhomeuse+outhomelocation+athomelocation+sharing+gender+agegroup1+edu+os+frequse+skills+phonedependent, data, Hess=TRUE)
+
+mpaordinal_outsave <- summary(margins(mpaordinal)) %>%
+  mutate(sample=2,
+         model=1,
+         dependent=4,
+         independent=factor,
+         estimate=AME) %>%
+  dplyr::select(sample, model, dependent, independent, estimate, lower, upper)
+
+mpacordinal_outsave <- summary(margins(mpacordinal)) %>%
+  mutate(sample=2,
+         model=2,
+         dependent=4,
+         independent=factor,
+         estimate=AME) %>%
+  dplyr::select(sample, model, dependent, independent, estimate, lower, upper) %>%
+  filter(independent=="turnedoffSmartphone not always on"|independent=="outhomeuseSmartphone left at home"|independent=="outhomelocationIn purse/backpack/bag"|independent=="athomelocationSmartphone left stationary when at home"|independent=="sharingSmartphone shared with another person")
+
+mpaordinal_outprint <- summary(margins(mpaordinal)) %>%
+  dplyr::select(factor, AME, SE, p) %>%
+  slice(match(order_pa, factor))
+
+mpacordinal_outprint <- summary(margins(mpacordinal)) %>%
+  dplyr::select(factor, AME, SE, p) %>%
+  slice(match(order_pac, factor))
+
+kable(mpaordinal_outprint, digits=3) %>%
+  kable_styling()
+
+nobs(mpaordinal)
+round(PseudoR2(mpaordinal, which="Nagelkerke"), digits=3)
+
+kable(mpacordinal_outprint, digits=3) %>%
+  kable_styling()
+
+nobs(mpacordinal)
+round(PseudoR2(mpacordinal, which="Nagelkerke"), digits=3)
+```
+
+# Table A10. OLS regression models of sedentary behavior on smartphone usage behaviors and sociodemographic and smartphone-related characteristics Sample 2.
+```{r, results='asis'}
+wdsit <- lm(hrssitwd_adj1~turnedoff+outhomeuse+outhomelocation+athomelocation+sharing, data)
+wdsitc <- lm(hrssitwd_adj1~turnedoff+outhomeuse+outhomelocation+athomelocation+sharing+gender+agegroup1+edu+os+frequse+skills+phonedependent, data)
+wesit <- lm(hrssitwe_adj1~turnedoff+outhomeuse+outhomelocation+athomelocation+sharing, data)
+wesitc <- lm(hrssitwe_adj1~turnedoff+outhomeuse+outhomelocation+athomelocation+sharing+gender+agegroup1+edu+os+frequse+skills+phonedependent, data)
+
+wdsit_outsave <- tidy(wdsit, conf.int=TRUE, conf.level=0.95) %>%
+  mutate(sample=2,
+         model=1,
+         dependent=5,
+         independent=term,
+         lower=conf.low,
+         upper=conf.high) %>%
+  dplyr::select(sample, model, dependent, independent, estimate, lower, upper)
+
+wdsitc_outsave <- tidy(wdsitc, conf.int=TRUE, conf.level=0.95) %>%
+  mutate(sample=2,
+         model=2,
+         dependent=5,
+         independent=term,
+         lower=conf.low,
+         upper=conf.high) %>%
+  dplyr::select(sample, model, dependent, independent, estimate, lower, upper) %>%
+  filter(independent=="(Intercept)"|independent=="turnedoffSmartphone not always on"|independent=="outhomeuseSmartphone left at home"|independent=="outhomelocationIn purse/backpack/bag"|independent=="athomelocationSmartphone left stationary when at home"|independent=="sharingSmartphone shared with another person")
+
+wesit_outsave <- tidy(wesit, conf.int=TRUE, conf.level=0.95) %>%
+  mutate(sample=2,
+         model=1,
+         dependent=6,
+         independent=term,
+         lower=conf.low,
+         upper=conf.high) %>%
+  dplyr::select(sample, model, dependent, independent, estimate, lower, upper)
+
+wesitc_outsave <- tidy(wesitc, conf.int=TRUE, conf.level=0.95) %>%
+  mutate(sample=2,
+         model=2,
+         dependent=6,
+         independent=term,
+         lower=conf.low,
+         upper=conf.high) %>%
+  dplyr::select(sample, model, dependent, independent, estimate, lower, upper) %>%
+  filter(independent=="(Intercept)"|independent=="turnedoffSmartphone not always on"|independent=="outhomeuseSmartphone left at home"|independent=="outhomelocationIn purse/backpack/bag"|independent=="athomelocationSmartphone left stationary when at home"|independent=="sharingSmartphone shared with another person")
+
+stargazer(wdsit, wdsitc, wesit, wesitc, header=FALSE, align=TRUE, type='html', intercept.bottom = FALSE, digits=2, star.cutoffs = c(0.05, 0.01, 0.001), omit.stat=c("ser", "f"), dep.var.caption  = "Sedentary behavior(hrs)", dep.var.labels   = c("Weekday", "Weekend"), model.names=TRUE, order=c("Constant", "sharing", "turnedoff", "outhomeuse", "outhomelocation", "athomelocation", "gender", "agegroup1", "edu", "os", "frequse", "skills", "phonedependent"))
+```
+
+# Table A11. OLS regression models of sleep duration on smartphone usage behaviors and sociodemographic and smartphone-related characteristics Sample 2.
+```{r, results='asis'}
+data <- data %>%
+  mutate(nightstatusandlocation=relevel(nightstatusandlocation, ref="Turned on and in same room at night"))
+
+wdsleep <- lm(sleephrswd_adj1~turnedoff+nightstatusandlocation+sharing, data)
+wdsleepc <- lm(sleephrswd_adj1~turnedoff+nightstatusandlocation+sharing+gender+agegroup1+edu+os+frequse+skills+phonedependent, data)
+wesleep <- lm(sleephrswe_adj1~turnedoff+nightstatusandlocation+sharing, data)
+wesleepc <- lm(sleephrswe_adj1~turnedoff+nightstatusandlocation+sharing+gender+agegroup1+edu+os+frequse+skills+phonedependent, data)
+
+wdsleep_outsave <- tidy(wdsleep, conf.int=TRUE, conf.level=0.95) %>%
+  mutate(sample=2,
+         model=1,
+         dependent=7,
+         independent=term,
+         lower=conf.low,
+         upper=conf.high) %>%
+  dplyr::select(sample, model, dependent, independent, estimate, lower, upper)
+
+wdsleepc_outsave <- tidy(wdsleepc, conf.int=TRUE, conf.level=0.95) %>%
+  mutate(sample=2,
+         model=2,
+         dependent=7,
+         independent=term,
+         lower=conf.low,
+         upper=conf.high) %>%
+  dplyr::select(sample, model, dependent, independent, estimate, lower, upper) %>%
+  filter(independent=="(Intercept)"|independent=="turnedoffSmartphone not always on"|independent=="nightstatusandlocationSmartphone turned off or in other room at night"|independent=="sharingSmartphone shared with another person")
+
+wesleep_outsave <- tidy(wesleep, conf.int=TRUE, conf.level=0.95) %>%
+  mutate(sample=2,
+         model=1,
+         dependent=8,
+         independent=term,
+         lower=conf.low,
+         upper=conf.high) %>%
+  dplyr::select(sample, model, dependent, independent, estimate, lower, upper)
+
+wesleepc_outsave <- tidy(wesleepc, conf.int=TRUE, conf.level=0.95) %>%
+  mutate(sample=2,
+         model=2,
+         dependent=8,
+         independent=term,
+         lower=conf.low,
+         upper=conf.high) %>%
+  dplyr::select(sample, model, dependent, independent, estimate, lower, upper) %>%
+  filter(independent=="(Intercept)"|independent=="turnedoffSmartphone not always on"|independent=="nightstatusandlocationSmartphone turned off or in other room at night"|independent=="sharingSmartphone shared with another person")
+
+stargazer(wdsleep, wdsleepc, wesleep, wesleepc, header=FALSE, align=TRUE, type='html', intercept.bottom = FALSE, digits=2, star.cutoffs = c(0.05, 0.01, 0.001), omit.stat=c("ser", "f"), dep.var.caption  = "Sleep duration(hrs)", dep.var.labels   = c("Weekday", "Weekend"), model.names=TRUE, order=c("Constant", "sharing", "turnedoff", "nightstatusandlocation", "gender", "agegroup1", "edu", "os", "frequse", "skills", "phonedependent"))
+
+## save regression output in csv file
+output_targets <- bind_rows(wdmobility_outsave, wdmobilityc_outsave, wemobility_outsave, wemobilityc_outsave,
+                            vpaordinal_outsave, vpacordinal_outsave, mpaordinal_outsave, mpacordinal_outsave,
+                            wdsit_outsave, wdsitc_outsave, wesit_outsave, wesitc_outsave,
+                            wdsleep_outsave, wdsleepc_outsave, wesleep_outsave, wesleepc_outsave)
+write_csv(output_targets, "output_targets.csv")
+
+output_targets_log <- bind_rows(wdmobilitylog_outsave, wdmobilitylogc_outsave, wemobilitylog_outsave, wemobilitylogc_outsave)
+write_csv(output_targets_log, "output_targets_log.csv")
+```
