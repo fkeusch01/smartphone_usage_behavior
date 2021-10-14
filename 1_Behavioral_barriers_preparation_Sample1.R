@@ -1,8 +1,9 @@
 # -----------------------------------------------------------------
-# Smartphone behavior
-# GIP W48: July 2020
-# Date: October 3, 2021
-# Author: Florian Keusch
+# Analysis code for:
+# Keusch, F., Wenz, A., & Conrad, F. (in press). Do you have your smartphone with you?
+# Behavioral barriers for measuring everyday activities with smartphone sensors.
+# Computers in Human Behavior. https://doi.org/10.1016/j.chb.2021.107054
+# Data preparation: Sample 1
 # -----------------------------------------------------------------
 # Set working directory
 setwd("U:\\Projekte\\GIP\\W48")
@@ -20,6 +21,7 @@ library(DescTools)
 library(vcd)
 
 # -----------------------------------------------------------------
+# Sample a data stored in GESIS Data Archive for the Social Sciences: https://doi.org/10.7802/2331
 # Load data set
 load("GIP_W48_V1.Rdata")
 
@@ -367,4 +369,4 @@ summary(gipw48_sp$nightoff_location)
 prop.table(table(gipw48_sp$nightoff_location))
 
 # save data
-save(data, file="Behavioral barriers_Sample1.RData")
+save(gipw48_sp, file="Behavioral barriers_Sample1.RData")
